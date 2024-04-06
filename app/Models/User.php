@@ -17,10 +17,14 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
+    // protected $fillable = [
+    //     'name',
+    //     'email',
+    //     'password',
+    // ];
+
+    protected $guarded = [
+        "id"
     ];
 
     /**
@@ -42,4 +46,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function productCategories(){
+        return $this->hasMany(ProductCategory::class);
+    }
+    public function productImages(){
+        return $this->hasMany(ProductImage::class);
+    }
+    public function products(){
+        return $this->hasMany(Product::class);
+    }
+    public function userContacts(){
+        return $this->hasMany(UserContact::class);
+    }
+    public function userCarts(){
+        return $this->hasMany(UserCart::class);
+    }
+    public function userOrderRequests(){
+        return $this->hasMany(UserOrderRequest::class);
+    }
+    public function userOrders(){
+        return $this->hasMany(UserOrder::class);
+    }
+
+
+
 }
