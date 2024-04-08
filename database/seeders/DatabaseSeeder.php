@@ -14,6 +14,7 @@ use App\Models\UserOrder;
 use App\Models\UserOrderDetail;
 use App\Models\UserOrderRequest;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,10 +23,18 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'name' => 'Taartely',
+            'email' => 'taartely@gmail.com',
+            'roles' => "seller",
+            "password" => Hash::make("password"),
+        ]);
+        User::factory()->create([
+            'name' => 'ivan',
+            'email' => 'ivan@gmail.com',
+            'roles' => "buyer",
+            "password" => Hash::make("password"),
+        ]);
         User::factory(10)->create();
         ProductCategory::factory(5)->create();
         Product::factory(10)->create();
