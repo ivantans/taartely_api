@@ -19,7 +19,14 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/test', function (){
-    $user = User::find(1);
-    dd($user);
+Route::get('/relation-test', function (){
+
+    // $user = User::find(1);
+    // echo($user->userContacts()->exists())?1:0;
+    dd(User::find(1));
+    // if ($hasPosts) {
+    //     echo "User memiliki postingan.";
+    // } else {
+    //     echo "User tidak memiliki postingan.";
+    // }
 });

@@ -47,25 +47,25 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     public function productCategories(){
-        return $this->hasMany(ProductCategory::class);
+        return $this->hasMany(ProductCategory::class, "user_id");
     }
     public function productImages(){
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, "user_id");
     }
     public function products(){
-        return $this->hasMany(Product::class);
+        return $this->hasMany(Product::class, "user_id");
     }
     public function userContacts(){
-        return $this->hasMany(UserContact::class);
+        return $this->hasMany(UserContact::class, "user_id");
     }
     public function userCarts(){
-        return $this->hasMany(UserCart::class);
+        return $this->hasMany(UserCart::class, "user_id");
     }
     public function userOrderRequests(){
-        return $this->hasMany(UserOrderRequest::class);
+        return $this->hasMany(UserOrderRequest::class, "user_id");
     }
     public function userOrders(){
-        return $this->hasMany(UserOrder::class);
+        return $this->hasMany(UserOrder::class, "user_id");
     }
 
 

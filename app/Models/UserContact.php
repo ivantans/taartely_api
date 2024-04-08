@@ -12,9 +12,9 @@ class UserContact extends Model
     protected $guarded = ["id"];
 
     public function user(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, "user_id");
     }
     public function userOrders(){
-        return $thiss->hasMany(UserOrder::class);
+        return $this->hasMany(UserOrder::class, "user_contact_id");
     }
 }
