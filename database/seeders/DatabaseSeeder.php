@@ -52,6 +52,9 @@ class DatabaseSeeder extends Seeder
         ProductStatus::factory()->create([
             "product_status_name" => "archive",
         ]);
+        ProductStatus::factory()->create([
+            "product_status_name" => "deleted",
+        ]);
 
 
         User::factory(10)->create();
