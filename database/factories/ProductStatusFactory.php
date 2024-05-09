@@ -3,10 +3,11 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductCategory>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\=ProductStatus>
  */
-class ProductCategoryFactory extends Factory
+class ProductStatusFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -16,8 +17,7 @@ class ProductCategoryFactory extends Factory
     public function definition(): array
     {
         return [
-            "user_id" => 1,
-            "product_category_name" => implode(" ", fake()->words()),
+            //
         ];
     }
 }

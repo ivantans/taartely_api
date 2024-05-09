@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id")->constrained();
-            $table->foreignId("product_category_id")->constrained();
+            $table->foreignId("product_category_id")->nullable(true);
+            $table->foreignId("product_status_id")->constrained();
             $table->string("product_name");
-            $table->string("product_slug");
+            $table->string("product_slug")->unique();
             $table->bigInteger("product_price");
             $table->text("product_composision");
             $table->text("product_description");
-            $table->enum("product_status", ["available", "empty", "archived"]);
             $table->timestamps();
         });
     }

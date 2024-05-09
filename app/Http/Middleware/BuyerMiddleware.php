@@ -4,10 +4,9 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
-class SellerMiddleware
+class BuyerMiddleware
 {
     /**
      * Handle an incoming request.
@@ -16,10 +15,9 @@ class SellerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!auth()->user()->roles == 'seller') {
-            return response()->json(['message' => 'Unauthorized - Only sellers are allowed.'], 403);
+        if (!auth()->user()->roles == 'buyer') {
+            return response()->json(['message' => 'Unauthorized - Only buyers are allowed.'], 403);
         }
-        
         return $next($request);
     }
 }

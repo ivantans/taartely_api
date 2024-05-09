@@ -46,8 +46,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    public function userContacts(){
+        return $this->hasMany(UserContact::class, "user_id");
+    }
+    public function userOrders(){
+        return $this->hasMany(UserOrder::class, "user_id");
+    }
     public function productCategories(){
         return $this->hasMany(ProductCategory::class, "user_id");
+    }
+    public function userCarts(){
+        return $this->hasMany(UserCart::class, "user_id");
     }
     public function productImages(){
         return $this->hasMany(ProductImage::class, "user_id");
@@ -55,19 +64,24 @@ class User extends Authenticatable
     public function products(){
         return $this->hasMany(Product::class, "user_id");
     }
-    public function userContacts(){
-        return $this->hasMany(UserContact::class, "user_id");
+
+    public function customCakeOrders(){
+        return $this->hasMany(CustomCakeOrder::class, "user_id");
     }
-    public function userCarts(){
-        return $this->hasMany(UserCart::class, "user_id");
+
+    public function productReviewImages(){
+        return $this->hasMany(ProductReviewImage::class, "user_id");
+    }
+
+    public function productReviews(){
+        return $this->hasMany(ProductReview::class, "user_id");
+    }
+    public function customCakeOrderImages(){
+        return $this->hasMany(CustomCakeOrderImage::class, "user_id");
     }
     public function userOrderRequests(){
         return $this->hasMany(UserOrderRequest::class, "user_id");
     }
-    public function userOrders(){
-        return $this->hasMany(UserOrder::class, "user_id");
-    }
-
 
 
 }

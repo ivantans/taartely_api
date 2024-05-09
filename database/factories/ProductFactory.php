@@ -19,12 +19,12 @@ class ProductFactory extends Factory
         return [
             "user_id" => 1,
             "product_category_id" => fake()->numberBetween(1,5),
+            "product_status_id" => 1,
             "product_name" => implode(" ", fake()->words()),
             "product_slug" => fake()->slug(),
             "product_price" => fake()->numberBetween(1000, 1000000),
             "product_composision" => implode(" ", fake()->words()),
             "product_description" => implode(" ", fake()->words()),
-            "product_status" => "available",
         ];
     }
 }

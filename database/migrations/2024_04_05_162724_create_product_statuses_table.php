@@ -11,12 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_order_requests', function (Blueprint $table) {
+        Schema::create('product_statuses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->constrained();
-            $table->foreignId("user_cart_id")->constrained();
-            $table->enum("order_request_status", ["rejected", "pending", "accepted"]);
-            $table->string("order_request_reason");
+            $table->string("product_status_name");
             $table->timestamps();
         });
     }
@@ -26,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_order_requests');
+        Schema::dropIfExists('product_statuses');
     }
 };

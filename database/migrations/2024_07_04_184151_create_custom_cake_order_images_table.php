@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_categories', function (Blueprint $table) {
+        Schema::create('custom_cake_order_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->constrained();
-            $table->string("product_category_name");
+            $table->foreignId("user_id");
+            $table->enum("custom_cake_order_status", [1,2,3]);
+            $table->string("custom_cake_order_image_path");
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_categories');
+        Schema::dropIfExists('custom_cake_order_images');
     }
 };

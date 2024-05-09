@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\Product\ProductCategoryController;
+use App\Http\Controllers\Api\Product\ProductController;
 use App\Models\User;
 use App\Models\UserContact;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +32,4 @@ Route::get('/relation-test', function (){
     //     echo "User tidak memiliki postingan.";
     // }
 });
-Route::get('/dev-test', function (){
-    echo(bin2hex(random_bytes(32)));
-});
+Route::get('/dev-test', [ProductController::class, "store"]);

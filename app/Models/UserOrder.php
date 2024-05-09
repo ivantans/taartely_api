@@ -12,10 +12,10 @@ class UserOrder extends Model
     public function user(){
         return $this->belongsTo(User::class, "user_id");
     }
-    public function userOrderDetails(){
-        return $this->hasMany(UserOrderDetail::class, "user_order_id");
-    }
     public function userContact(){
         return $this->belongsTo(UserContact::class, "user_contact_id");
+    }
+    public function userOrderDetails(){
+        return $this->hasMany(UserOrderDetail::class, "user_order_id");
     }
 }
