@@ -4,21 +4,18 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\OrderStatus;
-use App\Models\PaymentStatus;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
 use App\Models\ProductReview;
 use App\Models\ProductReviewImage;
 use App\Models\ProductStatus;
-use App\Models\Status;
 use App\Models\User;
 use App\Models\UserCart;
 use App\Models\UserCartDetail;
 use App\Models\UserContact;
 use App\Models\UserOrder;
 use App\Models\UserOrderDetail;
-use Database\Factories\ProductStatusFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -55,15 +52,32 @@ class DatabaseSeeder extends Seeder
         ProductStatus::factory()->create([
             "product_status_name" => "deleted",
         ]);
-
+        OrderStatus::factory()->create([
+            "order_status_name" => "pending",
+        ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "accepted",
+        ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "process",
+        ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "completed",
+        ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "deleted_by_buyer",
+        ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "deleted_by_seller",
+        ]);
 
         User::factory(10)->create();
         ProductCategory::factory(5)->create();
         Product::factory(10)->create();
         ProductImage::factory(10)->create();
-        UserCart::factory(5)->create();
-        UserCartDetail::factory(20)->create();
         UserContact::factory(20)->create();
+        UserCart::factory(2)->create();
+        UserCartDetail::factory(20)->create();
         UserOrder::factory(5)->create();
         UserOrderDetail::factory(20)->create();
         ProductReview::factory(5)->create();

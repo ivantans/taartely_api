@@ -17,7 +17,4 @@ class UserContact extends Model
     public function userOrders(){
         return $this->hasMany(UserOrder::class, "user_contact_id");
     }
-    public function userOrderRequests(){
-        return $this->hasMany(UserOrderRequest::class, "user_contact_id");
-    }
 }

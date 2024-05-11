@@ -54,10 +54,7 @@ class User extends Authenticatable
     }
     public function productCategories(){
         return $this->hasMany(ProductCategory::class, "user_id");
-    }
-    public function userCarts(){
-        return $this->hasMany(UserCart::class, "user_id");
-    }
+    }   
     public function productImages(){
         return $this->hasMany(ProductImage::class, "user_id");
     }
@@ -79,9 +76,13 @@ class User extends Authenticatable
     public function customCakeOrderImages(){
         return $this->hasMany(CustomCakeOrderImage::class, "user_id");
     }
-    public function userOrderRequests(){
-        return $this->hasMany(UserOrderRequest::class, "user_id");
+
+    public function userCartDetails(){
+        return $this->hasMany(UserCartDetail::class, "user_id");
     }
 
+    public function userCart(){
+        return $this->belongsTo(UserCart::class, "user_id");
+    }
 
 }

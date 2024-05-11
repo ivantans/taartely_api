@@ -17,8 +17,10 @@ class UserCartFactory extends Factory
     public function definition(): array
     {
         return [
-            "user_id" => fake()->numberBetween(2,10),
-            "is_active" => 1,
+            "user_id" => fake()->numberBetween(2,3),
+            "total_product" => fake()->numberBetween(1,10),
+            "total_quantity" => fake()->numberBetween(1,10),
+            "total_price" => fake()->numberBetween(10000,100000)
         ];
     }
 }

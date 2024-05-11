@@ -21,9 +21,6 @@ class Product extends Model
     public function userOrderDetails(){
         return $this->hasMany(UserOrderDetail::class, "product_id");
     }
-    public function userCartDetails(){
-        return $this->hasMany(UserCartDetail::class, "product_id");
-    }
     public function productImages(){
         return $this->hasMany(ProductImage::class, "product_id");
     }
@@ -32,6 +29,10 @@ class Product extends Model
     }
     public function productStatus(){
         return $this->belongsTo(ProductStatus::class, "product_status_id");
+    }
+
+    public function userCartDetails(){
+        return $this->hasMany(UserCartDetail::class, "product_id");
     }
 
     public function sluggable():array{

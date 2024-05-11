@@ -259,7 +259,7 @@ class ProductController extends Controller
             UserRoleUtil::sellerStrict();
             $product = Product::findOrFail($id);
             $product->update([
-                "product_status" => 4
+                "product_status_id" => 4
             ]);
             return response()->json([
                 "success" => true,

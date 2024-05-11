@@ -18,4 +18,7 @@ class UserOrder extends Model
     public function userOrderDetails(){
         return $this->hasMany(UserOrderDetail::class, "user_order_id");
     }
+    public function orderStatus(){
+        return $this->belongsTo(OrderStatus::class, "order_status_id");
+    }
 }

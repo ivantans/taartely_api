@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('user_carts', function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id")->constrained();
-            $table->enum("is_active", [0,1]);
+            $table->bigInteger("total_product")->nullable();
+            $table->bigInteger("total_quantity")->nullable();
+            $table->bigInteger("total_price")->nullable();
             $table->timestamps();
         });
     }

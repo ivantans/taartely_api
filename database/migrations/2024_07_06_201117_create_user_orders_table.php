@@ -15,14 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId("user_id")->constrained();
             $table->foreignId("user_contact_id")->constrained();
-            $table->enum("order_payment_status_id", [1,2,3]);
-            $table->enum("order_status_id", [1,2,3]);
+            $table->foreignId("order_status_id")->constrained();
             $table->string("order_note");
             $table->dateTime("order_due_date");
             $table->bigInteger("order_total_price");
             $table->integer("order_total_product");
             $table->integer("order_total_quantity");
-            $table->string("order_reason");
+            $table->string("order_reason")->nullable();
             $table->timestamps();
         });
         

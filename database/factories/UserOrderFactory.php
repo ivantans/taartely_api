@@ -19,7 +19,6 @@ class UserOrderFactory extends Factory
         return [
             "user_id" => fake()->numberBetween(2,5),
             "user_contact_id" => 1,
-            "order_payment_status_id" => 1,
             "order_status_id" => 1,
             "order_note" => fake()->words(10, true),
             "order_due_date" => fake()->dateTime(),
