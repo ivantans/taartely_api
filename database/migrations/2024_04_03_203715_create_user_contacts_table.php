@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('user_contacts', function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id")->constrained();
+            $table->string("name");
             $table->string("user_address");
             $table->string("user_phone_number");
             $table->boolean("is_active")->default(1);

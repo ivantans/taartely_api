@@ -83,7 +83,6 @@ class ReviewController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Review berhasil ditambahkan",
-                "id_rview" => $product_review->id
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {

@@ -39,12 +39,14 @@ class UserContactController extends Controller
             UserRoleUtil::buyerStrict();
             $user_id = auth()->user()->id;
             $validatedData = $request->validate([
+                "name" => "required|string|max:50",
                 "user_address" => "required|string|max:100",
                 "user_phone_number" => "required|string|max:15"
             ]);
 
-            $contacts = UserContact::create([
+            UserContact::create([
                 "user_id" => $user_id,
+                "name" => $validatedData["name"],
                 "user_address" => $validatedData["user_address"],
                 "user_phone_number" => $validatedData["user_phone_number"],
                 "is_active" => 1,
@@ -52,7 +54,7 @@ class UserContactController extends Controller
 
             return response()->json([
                 "success" => true,
-                "message" => $contacts
+                "message" => "Berhasil menambahkan contacts"
             ], 201);
         } catch(\Exception $e){
             return response()->json([

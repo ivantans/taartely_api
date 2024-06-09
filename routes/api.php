@@ -59,7 +59,7 @@ Route::middleware(["auth:sanctum"])->group(function(){
     Route::put("/categories/{id}", [ProductCategoryController::class, "update"]);
     Route::delete("/categories/{id}", [ProductCategoryController::class, "destroy"]);
     //! Product
-    Route::get("/products", [ProductController::class, "index"]);
+    Route::get("/products", [ProductController::class, "searchByCategory"]);
     Route::post("/products", [ProductController::class, "store"]);
     Route::get("/products/{id}", [ProductController::class, "show"]);
     Route::put("/products/{id}", [ProductController::class, "update"]);
@@ -81,6 +81,7 @@ Route::middleware(["auth:sanctum"])->group(function(){
 Route::middleware(["auth:sanctum"])->group(function(){
     Route::get("/orders", [UserOrderController::class, "index"]);
     Route::post("/orders", [UserOrderController::class, "store"]);
+    Route::get("/orders/{id}", [UserOrderController::class, "show"]);
     Route::put("/orders/approve/{id}", [UserOrderController::class, "approve"]);
     Route::put("/orders/complete/{id}", [UserOrderController::class, "complete"]);
     Route::put("/orders/cancel/{id}", [UserOrderController::class, "cancel"]);

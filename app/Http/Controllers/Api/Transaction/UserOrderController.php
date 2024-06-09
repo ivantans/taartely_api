@@ -22,7 +22,7 @@ class UserOrderController extends Controller
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
                 'Authorization' => 'Basic U0ItTWlkLXNlcnZlci1YQUZYVlA4UTI0UDJranYwM0E2dzZuM2Y6'
-            ])->get("https://api.sandbox.midtrans.com/v1/payment-links/xyz11-" . $user_order->id);
+            ])->get("https://api.sandbox.midtrans.com/v1/payment-links/xyz111-" . $user_order->id);
             $data = $response->json();
             $transaction_status = $data["last_snap_transaction_status"];
 
@@ -84,6 +84,7 @@ class UserOrderController extends Controller
                     'user_id' => $order->user_id,
                     'user_contact_id' => $order->user_contact_id,
                     'order_status_id' => $order->order_status_id,
+                    'order_contact_name' => $order->userContact->name,
                     'order_status_name' => $order->orderStatus->order_status_name ?? null, // Include order_status_name
                     'order_note' => $order->order_note,
                     'payment_link_url' => $order->payment_link_url,
@@ -118,7 +119,47 @@ class UserOrderController extends Controller
             ], 500);
         }
     }
+    public function show(string $id)
+    {
+        try {
+            $order = UserOrder::findOrFail($id);
+            $orderDetails = [];
+            foreach ($order->userOrderDetails as $userOrderDetail) {
+                $orderDetails[] = [
+                    "product_name" => $userOrderDetail->product->product_name,
+                    "order_detail_quantity" => $userOrderDetail->order_detail_quantity,
+                ];
+            }
 
+            $responseData = [
+                "order_id" => $order->id,
+                "order_status_name" => $order->orderStatus->order_status_name,
+                'order_note' => $order->order_note,
+                'payment_link_url' => $order->payment_link_url,
+                'order_due_date' => $order->order_due_date,
+                'order_total_price' => $order->order_total_price,
+                'order_total_product' => $order->order_total_product,
+                'order_total_quantity' => $order->order_total_quantity,
+                'order_reason' => $order->order_reason,
+                'created_at' => $order->created_at,
+                'updated_at' => $order->updated_at,
+                "buyer_name" => $order->userContact->name,
+                "user_address" => $order->userContact->user_address,
+                "user_phone_number" => $order->userContact->user_phone_number,
+                "order_details" => $orderDetails,
+            ];
+
+            return response()->json([
+                "success" => true,
+                "data" => $responseData
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage(),
+            ], 500);
+        }
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -167,7 +208,7 @@ class UserOrderController extends Controller
             return response()->json([
                 "success" => true,
                 "data" => $user_order
-            ],201);
+            ], 201);
 
         } catch (\Exception $e) {
             return response()->json([
@@ -211,7 +252,7 @@ class UserOrderController extends Controller
                 'Authorization' => env("AUTHORIZATION"),
             ])->post('https://api.sandbox.midtrans.com/v1/payment-links', [
                         'transaction_details' => [
-                            'order_id' => "xyz11-" . $order->id,
+                            'order_id' => "xyz111-" . $order->id,
                             'gross_amount' => (int) $order->order_total_price,
                         ],
                         'customer_required' => true,

@@ -15,18 +15,42 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function searchByCategory(Request $request)
     {
         try {
-            $seller = UserRoleUtil::sellerRoles();
+            // Check if the category parameter is present in the request
+            if ($request->has("category")) {
+                $category = $request->get("category");
 
-            if ($seller) {
-                $products = Product::with(["productStatus"])
-                    ->where("product_status_id", "!=", 4)
-                    ->get();
+                // Determine if the user is a seller
+                $seller = UserRoleUtil::sellerRoles();
 
+                // Fetch products based on the user's role and category
+                if ($seller) {
+                    $products = Product::with(["productCategory", "productStatus", "productImages", "productReviews"])
+                        ->where("product_status_id", "!=", 4)
+                        ->whereHas("productCategory", function ($query) use ($category) {
+                            $query->where("product_category_name", $category);
+                        })
+                        ->get();
+                } else {
+                    $products = Product::with(["productCategory", "productStatus", "productImages", "productReviews"])
+                        ->where("product_status_id", "!=", 3)
+                        ->where("product_status_id", "!=", 4)
+                        ->whereHas("productCategory", function ($query) use ($category) {
+                            $query->where("product_category_name", $category);
+                        })
+                        ->get();
+                }
 
+                // Map the products to a response format
                 $data = $products->map(function ($product) {
+                    // Calculate the average rating
+                    $averageRating = $product->productReviews->avg('product_review_rating') ?: 0;
+                    // Calculate the review count
+                    $reviewCount = $product->productReviews->count();
+
                     return [
                         'id' => $product->id,
                         'product_name' => $product->product_name,
@@ -37,6 +61,56 @@ class ProductController extends Controller
                         "product_description" => $product->product_description,
                         "product_status" => $product->productStatus->product_status_name,
                         "images" => $product->productImages->first() ? $product->productImages->first()->product_image_path : null,
+                        "average_rating" => round($averageRating, 2), // Rounded to 2 decimal places
+                        "review_count" => $reviewCount, // Add review count
+                    ];
+                });
+
+                return response()->json([
+                    "roles" => $seller ? "seller" : "buyer",
+                    "success" => true,
+                    "data" => $data
+                ], 200);
+            } else {
+                // If no category parameter, return the default index response
+                return $this->index();
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                "success" => false,
+                "message" => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function index()
+    {
+        try {
+            $seller = UserRoleUtil::sellerRoles();
+
+            if ($seller) {
+                $products = Product::with(["productCategory", "productStatus", "productImages", "productReviews"])
+                    ->where("product_status_id", "!=", 4)
+                    ->get();
+
+                $data = $products->map(function ($product) {
+                    // Calculate the average rating
+                    $averageRating = $product->productReviews->avg('product_review_rating') ?: 0;
+                    // Calculate the review count
+                    $reviewCount = $product->productReviews->count();
+
+                    return [
+                        'id' => $product->id,
+                        'product_name' => $product->product_name,
+                        'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
+                        'product_slug' => $product->product_slug,
+                        'product_price' => $product->product_price,
+                        "product_composision" => $product->product_composision,
+                        "product_description" => $product->product_description,
+                        "product_status" => $product->productStatus->product_status_name,
+                        "images" => $product->productImages->first() ? $product->productImages->first()->product_image_path : null,
+                        "average_rating" => round($averageRating, 2), // Rounded to 2 decimal places
+                        "review_count" => $reviewCount, // Add review count
                     ];
                 });
 
@@ -48,11 +122,17 @@ class ProductController extends Controller
             }
 
             if (!$seller) {
-                $products = Product::with(["productCategory", "productStatus"])
+                $products = Product::with(["productCategory", "productStatus", "productImages", "productReviews"])
                     ->where("product_status_id", "!=", 3)
                     ->where("product_status_id", "!=", 4)
                     ->get();
+
                 $data = $products->map(function ($product) {
+                    // Calculate the average rating
+                    $averageRating = $product->productReviews->avg('product_review_rating') ?: 0;
+                    // Calculate the review count
+                    $reviewCount = $product->productReviews->count();
+
                     return [
                         'id' => $product->id,
                         'product_name' => $product->product_name,
@@ -63,8 +143,11 @@ class ProductController extends Controller
                         "product_description" => $product->product_description,
                         "product_status" => $product->productStatus->product_status_name,
                         "images" => $product->productImages->first() ? $product->productImages->first()->product_image_path : null,
+                        "average_rating" => round($averageRating, 2), // Rounded to 2 decimal places
+                        "review_count" => $reviewCount, // Add review count
                     ];
                 });
+
                 return response()->json([
                     "roles" => "buyer",
                     "success" => true,
@@ -79,6 +162,7 @@ class ProductController extends Controller
             ], 500);
         }
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -150,47 +234,55 @@ class ProductController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {
-        try {
-            $seller = UserRoleUtil::sellerRoles();
-            $product = Product::with(["productCategory", "productImages"])->findOrFail($id);
+{
+    try {
+        $seller = UserRoleUtil::sellerRoles();
+        $product = Product::with(["productCategory"])->findOrFail($id);
 
-            // Jika data telah dihapus maka data tidak valid
-            if ($product->product_status_id == 4) {
-                return throw new \Exception("data tidak valid");
-            }
-            // jika bukan use maka product yang status 3 / archive tidak dapat dilihat
-            if (!$seller && $product->product_status_id == 3) {
-                return throw new \Exception("Unauthorization");
-            }
-
-            $url = [];
-            foreach ($product->productImages as $key => $productImage) {
-                $url[$key]["id"] = $productImage->id;
-                $url[$key]["url"] = $productImage->product_image_path;
-            }
-            $data = [
-                "id" => $product->id,
-                "product_name" => $product->product_name,
-                "product_status" => $product->productStatus->product_status_name,
-                'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
-                "product_slug" => $product->product_slug,
-                "product_price" => $product->product_price,
-                "product_composision" => $product->product_composision,
-                "product_description" => $product->product_description,
-                "created_at" => $product->created_at,
-                "images" => $url
-            ];
-            return response()->json([
-                "data" => $data,
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                "success" => false,
-                "message" => $e->getMessage()
-            ], 500);
+        // Jika data telah dihapus maka data tidak valid
+        if ($product->product_status_id == 4) {
+            throw new \Exception("Data tidak valid");
         }
+
+        // jika bukan user seller maka product yang status 3 / archive tidak dapat dilihat
+        if (!$seller && $product->product_status_id == 3) {
+            throw new \Exception("Unauthorization");
+        }
+
+        $url = [];
+        foreach ($product->productImages as $key => $productImage) {
+            $url[$key]["id"] = $productImage->id;
+            $url[$key]["url"] = $productImage->product_image_path;
+        }
+
+        $averageRating = $product->productReviews->avg('product_review_rating') ?? 0;
+        $reviewCount = $product->productReviews->count();
+
+        $data = [
+            "id" => $product->id,
+            "product_name" => $product->product_name,
+            "product_status" => $product->productStatus->product_status_name,
+            'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
+            "product_slug" => $product->product_slug,
+            "product_price" => $product->product_price,
+            "product_composision" => $product->product_composision,
+            "product_description" => $product->product_description,
+            "created_at" => $product->created_at,
+            "average_rating" => $averageRating,
+            "review_count" => $reviewCount,
+            "images" => $url,
+        ];
+
+        return response()->json([
+            "data" => $data,
+        ], 200);
+    } catch (\Exception $e) {
+        return response()->json([
+            "success" => false,
+            "message" => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Update the specified resource in storage.
