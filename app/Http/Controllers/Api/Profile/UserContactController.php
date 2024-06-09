@@ -20,7 +20,7 @@ class UserContactController extends Controller
             $contacts = UserContact::where("user_id", $user_id)->where("is_active", 1)->get();
             return response()->json([
                 "success" => true,
-                "message" => $contacts
+                "data" => $contacts
             ], 200);
         } catch(\Exception $e){
             return response()->json([
@@ -53,7 +53,7 @@ class UserContactController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => $contacts
-            ], 200);
+            ], 201);
         } catch(\Exception $e){
             return response()->json([
                 "success" => false,
@@ -137,7 +137,7 @@ class UserContactController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "Data berhasil dihapus"
-            ]);
+            ], 204);
         } catch(\Exception $e){
             return response()->json([
                 "success" => false,

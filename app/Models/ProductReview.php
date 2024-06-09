@@ -22,4 +22,8 @@ class ProductReview extends Model
         return $this->belongsTo(Product::class, "product_id");
     }
 
+    public function userOrderDetail(){
+        return $this->belongsTo(UserOrderDetail::class, "user_order_detail_id");
+    }
+
 }

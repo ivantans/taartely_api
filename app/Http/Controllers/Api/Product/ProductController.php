@@ -17,32 +17,26 @@ class ProductController extends Controller
      */
     public function index()
     {
-        try{
+        try {
             $seller = UserRoleUtil::sellerRoles();
 
-            if($seller){
-                $products = Product::with(["productCategory", "productStatus"])
-                            ->where("product_status_id", "!=", 4)
-                            ->get();
-                
+            if ($seller) {
+                $products = Product::with(["productStatus"])
+                    ->where("product_status_id", "!=", 4)
+                    ->get();
+
 
                 $data = $products->map(function ($product) {
-                    $url = [];
-                    foreach ($product->productImages as $key => $productImage) {
-                        $url[$key]["id"] = $productImage->id;
-                        $url[$key]["url"] = $productImage->product_image_path;
-                    }
-
                     return [
                         'id' => $product->id,
                         'product_name' => $product->product_name,
-                        'product_category' => $product->productCategory ? $product->productCategory->product_category_name : null,
+                        'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
                         'product_slug' => $product->product_slug,
                         'product_price' => $product->product_price,
                         "product_composision" => $product->product_composision,
                         "product_description" => $product->product_description,
                         "product_status" => $product->productStatus->product_status_name,
-                        "images" => $url,
+                        "images" => $product->productImages->first() ? $product->productImages->first()->product_image_path : null,
                     ];
                 });
 
@@ -51,38 +45,34 @@ class ProductController extends Controller
                     "success" => true,
                     "data" => $data
                 ], 200);
-            } 
+            }
 
-            if(!$seller){
+            if (!$seller) {
                 $products = Product::with(["productCategory", "productStatus"])
-                            ->where("product_status_id", "!=", 3)
-                            ->where("product_status_id", "!=", 4)
-                            ->get();
-                $data = $products->map(function ($product){
-                    $url = [];
-                    foreach ($product->productImages as $key => $productImage) {
-                        $url[$key]["id"] = $productImage->id;
-                        $url[$key]["url"] = $productImage->product_image_path;
-                    }
+                    ->where("product_status_id", "!=", 3)
+                    ->where("product_status_id", "!=", 4)
+                    ->get();
+                $data = $products->map(function ($product) {
                     return [
                         'id' => $product->id,
                         'product_name' => $product->product_name,
-                        'product_category' => $product->productCategory ? $product->productCategory->product_category_name : null,
+                        'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
                         'product_slug' => $product->product_slug,
                         'product_price' => $product->product_price,
                         "product_composision" => $product->product_composision,
                         "product_description" => $product->product_description,
                         "product_status" => $product->productStatus->product_status_name,
-                        "images" => $url,
-                    ];          
+                        "images" => $product->productImages->first() ? $product->productImages->first()->product_image_path : null,
+                    ];
                 });
                 return response()->json([
                     "roles" => "buyer",
                     "success" => true,
+                    "message" => "berhasil",
                     "data" => $data
                 ], 200);
             }
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage(),
@@ -95,7 +85,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        try{
+        try {
             UserRoleUtil::sellerStrict();
             if ($request->hasFile("images")) {
                 $validator = Validator::make($request->all(), [
@@ -103,16 +93,16 @@ class ProductController extends Controller
                 ]);
                 if ($validator->fails()) {
                     return throw new \Illuminate\Validation\ValidationException($validator);
-                }        
-            } 
+                }
+            }
             $validatedData = $request->validate([
                 "product_name" => "required|string|max:255|",
                 "product_price" => "required|numeric",
                 "product_composision" => "required|string|max:1000",
                 "product_description" => "required|string|max:1000",
                 "product_category_id" => "nullable|numeric"
-            ]); 
-            
+            ]);
+
             $user_id = auth()->user()->id;
             $product = Product::create([
                 "user_id" => $user_id,
@@ -124,9 +114,9 @@ class ProductController extends Controller
                 "product_status_id" => 1,
             ]);
 
-            if($request->hasFile("images")){
+            if ($request->hasFile("images")) {
                 $images = $request->file("images");
-                foreach($images as $key => $image){
+                foreach ($images as $key => $image) {
                     $path = $image->store('images', 's3');
                     $url[] = Storage::disk('s3')->url($path);
                     ProductImage::create([
@@ -136,27 +126,23 @@ class ProductController extends Controller
                     ]);
                 }
             }
-     
-            $data = [
-                "id" => $product->id,
-                "product_name" => $product->product_name,
-            ];
-     
+
+
             return response()->json([
                 "success" => true,
-                "data" => $data,
-            ]);  
+                "message" => "Berhasil menambahkan product",
+            ], 201);
 
-        } catch (\Illuminate\Validation\ValidationException $e){
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage(),
             ], 422);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -165,16 +151,16 @@ class ProductController extends Controller
      */
     public function show(string $id)
     {
-        try{
+        try {
             $seller = UserRoleUtil::sellerRoles();
             $product = Product::with(["productCategory", "productImages"])->findOrFail($id);
 
             // Jika data telah dihapus maka data tidak valid
-            if($product->product_status_id == 4){
+            if ($product->product_status_id == 4) {
                 return throw new \Exception("data tidak valid");
             }
             // jika bukan use maka product yang status 3 / archive tidak dapat dilihat
-            if(!$seller && $product->product_status_id == 3){
+            if (!$seller && $product->product_status_id == 3) {
                 return throw new \Exception("Unauthorization");
             }
 
@@ -187,7 +173,7 @@ class ProductController extends Controller
                 "id" => $product->id,
                 "product_name" => $product->product_name,
                 "product_status" => $product->productStatus->product_status_name,
-                "product_category" => $product->productCategory->product_category_name,
+                'product_category' => $product->productCategory == null ? "Kue" : $product->productCategory->product_category_name,
                 "product_slug" => $product->product_slug,
                 "product_price" => $product->product_price,
                 "product_composision" => $product->product_composision,
@@ -197,12 +183,12 @@ class ProductController extends Controller
             ];
             return response()->json([
                 "data" => $data,
-            ],200);
-        } catch (\Exception $e){
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 
@@ -211,7 +197,7 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try{
+        try {
             UserRoleUtil::sellerStrict();
             $product = Product::findOrFail($id);
             $validatedData = $request->validate([
@@ -237,14 +223,14 @@ class ProductController extends Controller
                 "message" => "data berhasil di update"
             ]);
             // $validatedData = 
-        } catch(\Illuminate\Validation\ValidationException $e){
+        } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage()
-            ],422);
-        } catch(\Exception $e){
+            ], 422);
+        } catch (\Exception $e) {
             return response()->json([
-                "success" => false, 
+                "success" => false,
                 "message" => $e->getMessage()
             ], 500);
         }
@@ -255,7 +241,7 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        try{
+        try {
             UserRoleUtil::sellerStrict();
             $product = Product::findOrFail($id);
             $product->update([
@@ -264,12 +250,12 @@ class ProductController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "data berhasil di hapus"
-            ],200);
-        } catch(\Exception $e){
+            ], 200);
+        } catch (\Exception $e) {
             return response()->json([
                 "success" => false,
                 "message" => $e->getMessage()
-            ],500);
+            ], 500);
         }
     }
 }

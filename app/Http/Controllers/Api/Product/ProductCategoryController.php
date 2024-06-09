@@ -45,7 +45,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 "success" => true,
                 "data" => $category
-            ], 200);
+            ], 201);
 
         } catch(\Illuminate\Validation\ValidationException $e){
             return response()->json([
@@ -102,7 +102,7 @@ class ProductCategoryController extends Controller
             return response()->json([
                 "success" => true,
                 "message" => "data berhasil di hapus"
-            ], 200);
+            ], 204);
         } catch(\Exception $e){
             return response()->json([
                 "success" => false,

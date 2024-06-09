@@ -14,6 +14,6 @@ class LogoutController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Successfully logged out'
-        ]);
+        ],200);
     }
 }

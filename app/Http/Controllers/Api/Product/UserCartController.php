@@ -55,7 +55,7 @@ class UserCartController extends Controller
         $cart = UserCart::where('user_id', $user_id)->first();
 
         foreach($cart->userCartDetails as $userCartDetail){
-            if($userCartDetail->product_status_id != 1){
+            if($userCartDetail->product->product_status_id != 1){
                 $userCartDetail->delete();
             }
         }
@@ -82,10 +82,12 @@ class UserCartController extends Controller
                     "product_name" => $userCartDetail->product->product_name,
                     "product_price" => $userCartDetail->product->product_price,
                     "cart_detail_quantity" => $userCartDetail->cart_detail_quantity,
+                    "product_image" => $userCartDetail->product->productImages->first() ? $userCartDetail->product->productImages->first()->product_image_path : null 
                 ];
             });
             return response()->json([
                 "success" => true,
+                "id" => $cart->id,
                 "total_product" => $cart->total_product,
                 "total_quantity" => $cart->total_quantity,
                 "total_price" => $cart->total_price,

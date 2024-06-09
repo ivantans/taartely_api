@@ -16,8 +16,9 @@ return new class extends Migration
             $table->foreignId("user_id")->constrained();
             $table->foreignId("user_contact_id")->constrained();
             $table->foreignId("order_status_id")->constrained();
-            $table->string("order_note");
-            $table->dateTime("order_due_date");
+            $table->text("order_note");
+            $table->text("payment_link_url")->nullable();
+            $table->date("order_due_date");
             $table->bigInteger("order_total_price");
             $table->integer("order_total_product");
             $table->integer("order_total_quantity");

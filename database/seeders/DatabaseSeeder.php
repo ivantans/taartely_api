@@ -70,17 +70,20 @@ class DatabaseSeeder extends Seeder
         OrderStatus::factory()->create([
             "order_status_name" => "deleted_by_seller",
         ]);
+        OrderStatus::factory()->create([
+            "order_status_name" => "expire",
+        ]);
 
         User::factory(10)->create();
         ProductCategory::factory(5)->create();
         Product::factory(10)->create();
         ProductImage::factory(10)->create();
-        UserContact::factory(20)->create();
-        UserCart::factory(2)->create();
-        UserCartDetail::factory(20)->create();
-        UserOrder::factory(5)->create();
-        UserOrderDetail::factory(20)->create();
-        ProductReview::factory(5)->create();
-        ProductReviewImage::factory(10)->create();
+        // UserContact::factory(20)->create();
+        // UserCart::factory(2)->create();
+        // UserCartDetail::factory(20)->create();
+        // UserOrder::factory(5)->create();
+        // UserOrderDetail::factory(20)->create();
+        // ProductReview::factory(5)->create();
+        // ProductReviewImage::factory(10)->create();
     }
 }

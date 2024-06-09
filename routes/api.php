@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\Product\UserCartController;
 use App\Http\Controllers\Api\Product\UserCartDetailController;
 use App\Http\Controllers\Api\Profile\UserContactController;
 use App\Http\Controllers\Api\Profile\UserController;
+use App\Http\Controllers\Api\Review\ReviewController;
 use App\Http\Controllers\Api\Transaction\UserOrderController;
 use App\Models\ProductCategory;
 use App\Models\ProductImage;
@@ -33,7 +34,7 @@ use Illuminate\Support\Facades\Route;
     // }); 
     
 // Authentication
-Route::delete("/logout", [LogoutController::class, "logout"]);
+
 Route::post("/register", [RegisterController::class, 'register']);
 Route::post("/login", [LoginController::class, "login"]);
 
@@ -43,6 +44,7 @@ Route::post("/login", [LoginController::class, "login"]);
 
 
 Route::middleware(["auth:sanctum"])->group(function(){
+    Route::delete("/logout", [LogoutController::class, "logout"]);
     //! User profile
     Route::get("/users", [UserController::class, "getUserProfile"]);
     //! User address
@@ -79,6 +81,17 @@ Route::middleware(["auth:sanctum"])->group(function(){
 Route::middleware(["auth:sanctum"])->group(function(){
     Route::get("/orders", [UserOrderController::class, "index"]);
     Route::post("/orders", [UserOrderController::class, "store"]);
+    Route::put("/orders/approve/{id}", [UserOrderController::class, "approve"]);
+    Route::put("/orders/complete/{id}", [UserOrderController::class, "complete"]);
+    Route::put("/orders/cancel/{id}", [UserOrderController::class, "cancel"]);
+
+});
+// Review
+Route::middleware(["auth:sanctum"])->group(function(){
+    Route::post("/reviews/{productId}/{userOrderId}", [ReviewController::class, "store"]);
+    Route::get("/reviews/{productId}", [ReviewController::class, "show"]);
+    Route::post("/reviews/show-review/{reviewId}", [ReviewController::class, "showReview"]);
+    Route::post("/reviews/hide-review/{reviewId}", [ReviewController::class, "hideReview"]);
 
 });
 

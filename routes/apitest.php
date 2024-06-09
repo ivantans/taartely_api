@@ -4,13 +4,7 @@ use App\Http\Controllers\Api\Product\ProductController;
 
 
 
-Route::middleware(["buyer", "auth:sanctum"])->group(function(){
-    Route::get("/test", function(){
-        return response()->json([
-            "success" => true,
-        ]);
-    });
-});
+
 // 
 Route::middleware(['auth:sanctum'])->group(function(){
     Route::get("/dev-test", function(){
@@ -24,3 +18,9 @@ Route::middleware(['auth:sanctum'])->group(function(){
 //     return $request->user();
 // });
 Route::post("/data", [ProductController::class, "store"]);
+Route::get("/test", function(){
+    return response()->json([
+        "data1" => "anjay1",
+        "data2" => "anjay2"
+    ],200);
+});
