@@ -64,3 +64,7 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Author
+
+Built by [Ivan Tanjaya Sutrisna](https://ivantans.id), a backend developer in Bandung, Indonesia. More projects and contact: [ivantans.id](https://ivantans.id).
